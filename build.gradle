@@ -1,39 +1,38 @@
-buildscript {
-    ext {
-        springBootVersion = '2.1.7.RELEASE' // 2.1.7, 2.1.8, 2.1.9 다 괜찮습니다.
-    }
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
+plugins { // (1)
+    id 'org.springframework.boot' version '2.4.1' // RELEASE 삭제
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
 }
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 group 'com.jojoldu.book'
-version '1.0-SNAPSHOT'
+version '1.0.4-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
+}
+
+// for Junit 5
+test { // (2)
+    useJUnitPlatform()
 }
 
 dependencies {
-    // 이렇게 관리할 경우 각 라이브러리들의 버전 관리가 한 곳에 집중, 버전 충돌 문제도 해결되어 편하게 개발을 진행할 수 있다.
-    // 프로젝트 개발에 필요한 의존성들을 선언하는 곳
-    compile('org.springframework.boot:spring-boot-starter-web')
-    // 이 둘에게서 받도록 선언함
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-// 인텔리제이는 메이븐 저장소의 데이터를 인덱싱해서 관리하기 떄문에 커뮤니티 버전을 사용해도 의존성 자동완성이 가능함.
-//    testCompile group: 'junit', name: 'junit', version: '4.12'
-    // 의존성코드는 직접 작성해도 되고 자동완성으로 만들어도 되지만, 특정 버전을 명시하면 안 됨. 그래야만 위 springBootVersion 전역변수를 따라가게 된다.
-}
+    //(3)
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-mustache')
 
-test {
-    useJUnitPlatform()
+    // lombok
+    implementation('org.projectlombok:lombok')
+    implementation 'org.testng:testng:7.1.0'
+    implementation 'junit:junit:4.13.1'
+    annotationProcessor('org.projectlombok:lombok')
+    testImplementation('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
+
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation("org.mariadb.jdbc:mariadb-java-client")
+    implementation('com.h2database:h2')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
